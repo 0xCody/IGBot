@@ -16,7 +16,7 @@ def LoginPage():
     global root
     global icon
 	
-    root = Tk()  # This now makes a new window.
+    root = Tk()  
 	
     root.configure(bg='gray')
     root.geometry("725x400")
@@ -343,7 +343,6 @@ class InstagramBot:
         for i in range(1, 20):
             popups = driver.find_element_by_xpath("//div[@class='isgrP']")
             popups.send_keys(Keys.END)
-            # driver.execute_script('arguments[0].scrollTop = arguments[0].scrollTop + arguments[0].offsetHeight;', popup)
             time.sleep(3)
 
         who_to_follow = driver.find_elements_by_class_name('wo9IH')
@@ -421,11 +420,9 @@ class InstagramBot:
                 else:
                     InstagramBot.like_bot(self)
 
-
             except:
                 InstagramBot.quitbot(self)
                 time.sleep(60)
-                #InstagramBot.login(self)
                 root.mainloop()
 
 
