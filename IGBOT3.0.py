@@ -38,11 +38,11 @@ def LoginPage():
     nameEL.place(x=220, y=105)
     pwordEL.place(x=220, y=155)
 
-    options = ["Comment Bot", "Like Bot", "Follow Bot"]
+    options = ["Comment Bot", "Follow Bot"]
     global var
     var = StringVar()
     var.set("Pick A Bot")
-    menu = OptionMenu(root, var, options[0], options[1], options[2], command=bot_entry)
+    menu = OptionMenu(root, var, options[0], options[1], command=bot_entry)
     menu.place(x=325, y=195)
 
     loginB = Button(root, text='Login', bg="#4c7f4e", fg='white', width=5, font='Calibri', command=bot_and_login_picked)
@@ -57,17 +57,13 @@ def LoginPage():
 
 def bot_entry(entry):
     global commententry
-    global likeentry
     global followentry
 
     try:
         commentblank.destroy()
     except:
         pass
-    try:
-        likeblank.destroy()
-    except:
-        pass
+
     try:
         followblank.destroy()
     except:
@@ -89,20 +85,6 @@ def bot_entry(entry):
         except:
             pass
 
-    if var.get() == 'Like Bot':
-        global likelabel
-        global likeentry
-        likelabel = Label(root, bg="gray", fg='white', font='Calibri', text='Like Bot Hashtag: ')
-        likelabel.place(x=220, y=227)
-        likeentry = Entry(root, width=50)
-        likeentry.place(x=220, y=257)
-
-    else:
-        try:
-            likeentry.destroy()
-            likelabel.destroy()
-        except:
-            pass
 
     if var.get() == 'Follow Bot':
         global followlabel
@@ -123,18 +105,11 @@ def bot_entry(entry):
 def bot_and_login_picked():
     global invalid
     global commentblank
-    global likeblank
     global followblank
 
     if var.get() == 'Comment Bot' and commententry.get() != '':
         try:
             commentblank.destroy()
-        except:
-            pass
-
-    elif var.get() == 'Like Bot' and likeentry.get() != '':
-        try:
-            likeblank.destroy()
         except:
             pass
 
@@ -184,17 +159,6 @@ def bot_and_login_picked():
     except:
         pass
 
-    if var.get() == 'Like Bot' and likeentry.get() == '':
-
-        likeblank = Label(root, bg='gray', text='Please choose a hashtag (#) for the like bot')
-        likeblank.place(x=220, y=280)
-        likeblank['fg'] = 'white'
-        root.mainloop()
-
-    try:
-        likeblank.destroy()
-    except:
-        pass
 
     if var.get() == 'Follow Bot' and followentry.get() == '':
 
@@ -265,56 +229,6 @@ class InstagramBot:
             id_invalid['fg'] = 'gray'
             time.sleep(4)
             InstagramBot.run_bot(self)
-
-    def like_bot(self):
-        try:
-            global like_error
-            like_error.destroy()
-        except:
-            pass
-
-        driver = self.driver
-        driver.get("https://www.instagram.com/explore/tags/" + str(likeentry.get()).rstrip() + "/")
-
-        try:
-            time.sleep(3)
-            driver.find_element_by_class_name('error-container.-cx-PRIVATE-ErrorPage__errorContainer.-cx-PRIVATE-ErrorPage__errorContainer__')
-            InstagramBot.quitbot(self)
-            like_error = Label(root, bg='gray', text='Please enter a valid hashtag (#)')
-            like_error.place(x=220, y=280)
-            like_error['fg'] = 'white'
-            root.mainloop()
-        except:
-            pass
-
-        pic_hrefs = []
-        for i in range(1, 7):
-            try:
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                time.sleep(3)
-                # get tags
-                hrefs_in_view = driver.find_elements_by_tag_name('a')
-                # finding relevant hrefs
-                hrefs_in_view = [elem.get_attribute('href') for elem in hrefs_in_view
-                                 if '.com/p/' in elem.get_attribute('href')]
-                # building list of unique photos
-                [pic_hrefs.append(href) for href in hrefs_in_view if href not in pic_hrefs]
-
-            except Exception:
-                continue
-
-        for pic_href in pic_hrefs:
-            if 8 <= dt.datetime.now().hour <= 23:
-                driver.get(pic_href)
-                try:
-                    time.sleep(random.randint(95, 115))
-                    like_button = lambda: driver.find_element_by_xpath('//span[@aria-label="Like"]').click()
-                    like_button().click()
-
-                except Exception:
-                    time.sleep(2)
-            else:
-                time.sleep(60)
 
     def follow_bot(self):
         try:
@@ -416,9 +330,6 @@ class InstagramBot:
 
                 elif var.get() == 'Follow Bot':
                     InstagramBot.follow_bot(self)
-
-                else:
-                    InstagramBot.like_bot(self)
 
             except:
                 InstagramBot.quitbot(self)
